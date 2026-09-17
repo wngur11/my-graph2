@@ -45,7 +45,6 @@ fig1.update_traces(
     hovertemplate="<b>%{label}</b><br>편수: %{value}편<br>비율: %{percent}<extra></extra>"
 )
 
-# 중복 에러 방지를 위해 key="genre_donut_chart" 추가
 st.plotly_chart(fig1, use_container_width=True, key="genre_donut_chart")
 
 st.info("💡 **이 그래프로 알 수 있는 것:** (여기에 장르 분포에 대한 핵심 인사이트를 한 문장으로 적어주세요!)")
@@ -67,7 +66,6 @@ fig2.update_traces(
     hovertemplate="<b>%{label}</b><br>총 관객: %{value:,}명<extra></extra>"
 )
 
-# 중복 에러 방지를 위해 key="genre_movie_treemap" 추가
 st.plotly_chart(fig2, use_container_width=True, key="genre_movie_treemap")
 
 st.info("💡 **이 그래프로 알 수 있는 것:** (여기에 특정 장르나 영화의 관객 수 쏠림 현상 등에 대한 핵심 인사이트를 한 문장으로 적어주세요!)")
@@ -79,11 +77,10 @@ st.divider()
 # ==========================================
 st.subheader("3. 총 관객 수 분포")
 
-# 히스토그램 그리기
 fig3 = px.histogram(
     movies_df, 
     x='total_audi', 
-    nbins=30, # 구간 개수 설정
+    nbins=30, 
     title="영화들은 보통 관객을 얼마나 모을까?",
     labels={'total_audi': '총 관객 수 (명)'}
 )
@@ -93,24 +90,57 @@ fig3.update_traces(
 
 st.plotly_chart(fig3, use_container_width=True, key="total_audi_histogram")
 
-# 1) 가장 관객이 많은 영화 계산
+# 데이터 분석 (최다 관객 영화 및 가장 많이 분포된 구간)
 top_movie = movies_df.loc[movies_df['total_audi'].idxmax()]
 top_movie_name = top_movie['movieNm']
 top_movie_audi = top_movie['total_audi']
 
-# 2) 대부분의 영화가 몰려 있는 구간 계산 (데이터를 30개 구간으로 나누어 가장 편수가 많은 구간 찾기)
 bins = pd.cut(movies_df['total_audi'], bins=30)
 most_common_bin = movies_df['total_audi'].groupby(bins, observed=False).count().idxmax()
-
-# 판다스의 첫 구간은 음수로 표기될 수 있으므로 최솟값을 0으로 보정
 start_range = max(0, int(most_common_bin.left))
 end_range = int(most_common_bin.right)
 
-# 분석 결과를 문구로 출력 (f-string 사용)
 st.info(
     f"💡 **이 그래프로 알 수 있는 것:** "
     f"대부분의 영화가 총 관객 **{start_range:,}명 ~ {end_range:,}명** 구간에 몰려 있으며, "
     f"가장 관객이 많은 영화는 **'{top_movie_name}'** ({top_movie_audi:,}명)입니다."
+)
+
+st.divider()
+
+# ==========================================
+# 네 번째 구역: 개봉일 스크린수와 총 관객 수의 관계 (산점도)
+# ==========================================
+st.subheader("4. 개봉일 스크린수와 총 관객 수의 관계")
+
+# 산점도 그리기
+fig4 = px.scatter(
+    movies_df,
+    x='first_scrn',
+    y='total_audi',
+    color='genre',          # 장르별로 색상 다르게 표시
+    hover_name='movieNm',   # 마우스를 올렸을 때 영화명 표시
+    title="개봉 첫날 스크린을 많이 확보하면 총 관객 수도 많을까?",
+    labels={
+        'first_scrn': '개봉일 스크린수 (개)', 
+        'total_audi': '총 관객 수 (명)',
+        'genre': '장르'
+    }
+)
+
+# 호버 툴팁(마우스 오버 시 보이는 정보) 세부 설정
+fig4.update_traces(
+    hovertemplate="<b>%{hovertext}</b><br>스크린수: %{x:,}개<br>총 관객 수: %{y:,}명<extra></extra>"
+)
+
+st.plotly_chart(fig4, use_container_width=True, key="first_scrn_audi_scatter")
+
+# 상관관계에 대한 문구 추가
+correlation = movies_df['first_scrn'].corr(movies_df['total_audi'])
+st.info(
+    f"💡 **이 그래프로 알 수 있는 것:** "
+    f"개봉일 스크린수와 총 관객 수 사이의 상관계수는 약 **{correlation:.2f}**로, "
+    f"초기 스크린 확보가 최종 관객 수에 긍정적인 영향을 미치는 경향을 확인할 수 있습니다."
 )
 
 st.divider()
