@@ -46,9 +46,7 @@ fig1.update_traces(
 )
 
 st.plotly_chart(fig1, use_container_width=True, key="genre_donut_chart")
-
 st.info("💡 **이 그래프로 알 수 있는 것:** (여기에 장르 분포에 대한 핵심 인사이트를 한 문장으로 적어주세요!)")
-
 st.divider() 
 
 # ==========================================
@@ -67,9 +65,7 @@ fig2.update_traces(
 )
 
 st.plotly_chart(fig2, use_container_width=True, key="genre_movie_treemap")
-
 st.info("💡 **이 그래프로 알 수 있는 것:** (여기에 특정 장르나 영화의 관객 수 쏠림 현상 등에 대한 핵심 인사이트를 한 문장으로 적어주세요!)")
-
 st.divider() 
 
 # ==========================================
@@ -90,7 +86,6 @@ fig3.update_traces(
 
 st.plotly_chart(fig3, use_container_width=True, key="total_audi_histogram")
 
-# 데이터 분석 (최다 관객 영화 및 가장 많이 분포된 구간)
 top_movie = movies_df.loc[movies_df['total_audi'].idxmax()]
 top_movie_name = top_movie['movieNm']
 top_movie_audi = top_movie['total_audi']
@@ -105,7 +100,6 @@ st.info(
     f"대부분의 영화가 총 관객 **{start_range:,}명 ~ {end_range:,}명** 구간에 몰려 있으며, "
     f"가장 관객이 많은 영화는 **'{top_movie_name}'** ({top_movie_audi:,}명)입니다."
 )
-
 st.divider()
 
 # ==========================================
@@ -113,13 +107,12 @@ st.divider()
 # ==========================================
 st.subheader("4. 개봉일 스크린수와 총 관객 수의 관계")
 
-# 산점도 그리기
 fig4 = px.scatter(
     movies_df,
     x='first_scrn',
     y='total_audi',
-    color='genre',          # 장르별로 색상 다르게 표시
-    hover_name='movieNm',   # 마우스를 올렸을 때 영화명 표시
+    color='genre',          
+    hover_name='movieNm',   
     title="개봉 첫날 스크린을 많이 확보하면 총 관객 수도 많을까?",
     labels={
         'first_scrn': '개봉일 스크린수 (개)', 
@@ -128,19 +121,50 @@ fig4 = px.scatter(
     }
 )
 
-# 호버 툴팁(마우스 오버 시 보이는 정보) 세부 설정
 fig4.update_traces(
     hovertemplate="<b>%{hovertext}</b><br>스크린수: %{x:,}개<br>총 관객 수: %{y:,}명<extra></extra>"
 )
 
 st.plotly_chart(fig4, use_container_width=True, key="first_scrn_audi_scatter")
 
-# 상관관계에 대한 문구 추가
 correlation = movies_df['first_scrn'].corr(movies_df['total_audi'])
 st.info(
     f"💡 **이 그래프로 알 수 있는 것:** "
     f"개봉일 스크린수와 총 관객 수 사이의 상관계수는 약 **{correlation:.2f}**로, "
     f"초기 스크린 확보가 최종 관객 수에 긍정적인 영향을 미치는 경향을 확인할 수 있습니다."
 )
+st.divider()
+
+# ==========================================
+# 다섯 번째 구역: 주요 장르별 총 관객 수 상자 그림 (Box Plot)
+# ==========================================
+st.subheader("5. 주요 장르별 총 관객 수 분포 및 이상치")
+
+# 1) 영화가 10편 이상인 장르만 필터링
+genre_counts_all = movies_df['genre'].value_counts()
+major_genres = genre_counts_all[genre_counts_all >= 10].index
+filtered_df = movies_df[movies_df['genre'].isin(major_genres)]
+
+# 2) 상자 그림 그리기
+fig5 = px.box(
+    filtered_df,
+    x='genre',
+    y='total_audi',
+    hover_name='movieNm', # 점(이상치)에 마우스를 올렸을 때 영화명 표시
+    title="장르별 관객 수는 어떻게 분포되어 있을까? (10편 이상 개봉 장르)",
+    labels={
+        'genre': '장르',
+        'total_audi': '총 관객 수 (명)'
+    }
+)
+
+# 3) 호버 툴팁 세부 설정
+fig5.update_traces(
+    hovertemplate="<b>%{hovertext}</b><br>총 관객 수: %{y:,}명<extra></extra>"
+)
+
+st.plotly_chart(fig5, use_container_width=True, key="genre_audi_boxplot")
+
+st.info("💡 **이 그래프로 알 수 있는 것:** (여기에 각 장르별 관객 수의 평균적인 쏠림이나, 상자 밖으로 크게 벗어난 초대박 흥행작(이상치)에 대한 발견을 한 문장으로 적어주세요!)")
 
 st.divider()
