@@ -60,9 +60,6 @@ st.divider() # 다음 구역을 위해 나누기 선
 # ==========================================
 # 두 번째 구역: (여기에 다음 그래프 코드를 추가해 나갈 수 있습니다)
 # ==========================================
-import streamlit as st
-import pandas as pd
-import plotly.express as px
 
 # 페이지 기본 설정
 st.set_page_config(page_title="영화 데이터 그래프 도감 2", layout="wide")
