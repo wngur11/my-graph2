@@ -85,3 +85,35 @@ st.info(
     "장르별 총 관객 수 규모와 함께, 각 장르 내부에서 어떤 영화가 흥행을 주도했는지 계층 구조로 한눈에 파악할 수 있습니다."
 )
 st.markdown("---")
+
+# 3. 총 관객 수 히스토그램
+st.subheader("3. 총 관객 수 구간별 분포")
+
+# 히스토그램 생성
+fig3 = px.histogram(
+    df,
+    x="total_audi",
+    nbins=30,
+    title="총 관객 수 히스토그램",
+    labels={"total_audi": "총 관객 수", "count": "영화 편수"},
+)
+
+fig3.update_traces(
+    hovertemplate="관객 수 구간: %{x}<br>영화 편수: %{y}편<extra></extra>"
+)
+
+st.plotly_chart(fig3, use_container_width=True)
+
+# 최다 관객 수 영화 자동 계산
+max_movie = df.loc[df["total_audi"].idxmax()]
+max_movie_name = max_movie["movieNm"]
+max_movie_audi = max_movie["total_audi"]
+
+# 그래프 분석 및 구분선
+st.markdown("---")
+st.markdown("### 💡 이 그래프로 알 수 있는 것")
+st.info(
+    f"대부분의 영화가 비교적 적은 관객 수 구간(왼쪽 구간)에 몰려 있는 롱테일 분포를 보이며, "
+    f"가장 많은 관객을 동원한 영화는 **'{max_movie_name}'** (약 {max_movie_audi:,.0f}명)입니다."
+)
+st.markdown("---")
