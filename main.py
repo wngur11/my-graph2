@@ -213,30 +213,30 @@ st.info(
 )
 st.markdown("---")
 
-# 8. 10위권 체류 일수 vs 총 관객 수 산점도
-st.subheader("8. 10위권에 오래 머문 영화는 총 관객도 많은가")
+# 8. 개봉일 상영횟수 vs 개봉 첫 주 관객 수 산점도 (나만의 8번째 질문)
+st.subheader("8. 개봉일 상영횟수가 많으면 개봉 첫 주 관객 수도 많은가")
 
 fig8 = px.scatter(
     df,
-    x="days_in_top10",
-    y="total_audi",
+    x="first_show",
+    y="first_week_audi",
     color="genre_first",
     hover_name="movieNm",
-    title="10위권에 오래 머문 영화는 총 관객도 많은가",
+    title="개봉일 상영횟수가 많으면 개봉 첫 주 관객 수도 많은가",
     labels={
-        "days_in_top10": "10위권에 머문 날수",
-        "total_audi": "총 관객 수",
+        "first_show": "개봉일 상영횟수",
+        "first_week_audi": "개봉 첫 주 관객 수",
         "genre_first": "장르",
     },
 )
 fig8.update_traces(
-    hovertemplate="<b>%{hovertext}</b><br>10위권 머문 날수: %{x}일<br>총 관객 수: %{y:,.0f}명<extra></extra>"
+    hovertemplate="<b>%{hovertext}</b><br>개봉일 상영횟수: %{x:,.0f}회<br>개봉 첫 주 관객 수: %{y:,.0f}명<extra></extra>"
 )
 st.plotly_chart(fig8, use_container_width=True)
 
 st.markdown("---")
 st.markdown("### 💡 이 그래프로 알 수 있는 것")
 st.info(
-    "박스오피스 10위권에 머문 기간이 길수록 총 관객 수가 대체로 증가하는 강한 양의 상관관계를 보이며, 롱런(장기 흥행)이 대형 흥행의 핵심 요인임을 알 수 있습니다."
+    "개봉 첫날 상영횟수가 많은 영화일수록 개봉 첫 주 관객 수 역시 증가하는 뚜렷한 양의 상관관계를 보여주며, 초기 상영 기회 확보가 초반 흥행 성공에 큰 영향을 미침을 알 수 있습니다."
 )
 st.markdown("---")
