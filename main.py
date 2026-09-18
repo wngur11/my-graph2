@@ -182,3 +182,38 @@ st.info(
     "장르별 관객 수의 중앙값과 범위를 비교할 수 있으며, 상자 밖으로 튀어나온 이상치(Outlier) 점을 통해 해당 장르에서 압도적인 흥행을 기록한 대표 영화를 확인할 수 있습니다."
 )
 st.markdown("---")
+
+# 6. 개봉일 스크린수, 첫 주 관객수, 총 관객수의 관계 (버블 차트)
+st.subheader("6. 개봉일 스크린수, 첫 주 관객수, 총 관객수의 관계 (버블 차트)")
+
+# 버블 차트 생성 (점 크기: 개봉 첫 주 관객 수)
+fig6 = px.scatter(
+    df,
+    x="first_scrn",
+    y="total_audi",
+    size="first_week_audi",
+    color="genre_first",
+    hover_name="movieNm",
+    title="스크린수·첫 주 관객수·총 관객수 관계 버블 차트",
+    labels={
+        "first_scrn": "개봉일 스크린수",
+        "total_audi": "총 관객 수",
+        "first_week_audi": "개봉 첫 주 관객 수",
+        "genre_first": "장르",
+    },
+    size_max=50,
+)
+
+fig6.update_traces(
+    hovertemplate="<b>%{hovertext}</b><br>개봉일 스크린수: %{x:,.0f}개<br>총 관객 수: %{y:,.0f}명<extra></extra>"
+)
+
+st.plotly_chart(fig6, use_container_width=True)
+
+# 그래프 분석 및 구분선
+st.markdown("---")
+st.markdown("### 💡 이 그래프로 알 수 있는 것")
+st.info(
+    "버블의 크기(개봉 첫 주 관객 수)를 통해 개봉 초기 흥행 화제성이 최종 총 관객 수 및 스크린 수 확보와 어떤 종합적인 관계를 가지는지 입체적으로 분석할 수 있습니다."
+)
+st.markdown("---")
