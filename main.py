@@ -217,3 +217,27 @@ st.info(
     "버블의 크기(개봉 첫 주 관객 수)를 통해 개봉 초기 흥행 화제성이 최종 총 관객 수 및 스크린 수 확보와 어떤 종합적인 관계를 가지는지 입체적으로 분석할 수 있습니다."
 )
 st.markdown("---")
+
+# 7. 제작 국가 및 장르별 선버스트 차트
+st.subheader("7. 제작 국가 및 장르별 영화 편수 (선버스트 차트)")
+
+# 선버스트 차트 생성 (계층 구조: 국가 > 장르, 크기: 영화 편수)
+fig7 = px.sunburst(
+    df,
+    path=["nation", "genre_first"],
+    title="제작 국가 및 장르별 영화 편수 계층 구조",
+)
+
+fig7.update_traces(
+    hovertemplate="<b>%{label}</b><br>영화 편수: %{value}편<extra></extra>"
+)
+
+st.plotly_chart(fig7, use_container_width=True)
+
+# 그래프 분석 및 구분선
+st.markdown("---")
+st.markdown("### 💡 이 그래프로 알 수 있는 것")
+st.info(
+    "전체 영화의 국가별 점유 비율과 함께, 특정 국가 내에서 주를 이루는 장르 구성을 원형 계층 구조로 명확하게 파악할 수 있습니다."
+)
+st.markdown("---")
